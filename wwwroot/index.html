@@ -1,0 +1,1441 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CiberZone – Café Internet</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f; --surface: #12121a; --card: #1a1a26; --border: #2a2a40;
+    --accent: #00e5ff; --accent2: #7c3aed; --accent3: #f59e0b;
+    --text: #e8e8f0; --muted: #7a7a9a; --green: #10b981; --red: #ef4444;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: var(--bg); color: var(--text); font-family: 'Outfit', sans-serif; overflow-x: hidden; }
+  body::before {
+    content: ''; position: fixed; inset: 0;
+    background: radial-gradient(ellipse 600px 400px at 10% 20%, rgba(0,229,255,0.06) 0%, transparent 70%),
+                radial-gradient(ellipse 500px 300px at 90% 80%, rgba(124,58,237,0.08) 0%, transparent 70%);
+    pointer-events: none; z-index: 0;
+  }
+  header {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(10,10,15,0.95); backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 2rem; display: flex; align-items: center; justify-content: space-between; height: 70px;
+  }
+  .logo { font-family: 'Bebas Neue', sans-serif; font-size: 2rem; letter-spacing: 3px; color: var(--accent); text-shadow: 0 0 20px rgba(0,229,255,0.5); cursor: pointer; }
+  .logo span { color: var(--accent2); }
+  nav { display: flex; gap: 1.2rem; align-items: center; }
+  nav a { color: var(--muted); text-decoration: none; font-size: 0.88rem; font-weight: 500; transition: color 0.2s; cursor: pointer; }
+  nav a:hover, nav a.active { color: var(--accent); }
+  .header-right { display: flex; gap: 0.6rem; align-items: center; }
+  .admin-btn-header { background: rgba(124,58,237,0.15); border: 1px solid rgba(124,58,237,0.4); color: #a78bfa; padding: 0.4rem 1rem; border-radius: 6px; font-family: 'Outfit', sans-serif; font-weight: 600; font-size: 0.82rem; cursor: pointer; transition: all 0.2s; }
+  .admin-btn-header:hover { background: rgba(124,58,237,0.3); }
+  .user-btn-header { background: rgba(0,229,255,0.12); border: 1px solid rgba(0,229,255,0.35); color: var(--accent); padding: 0.4rem 1rem; border-radius: 6px; font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 0.82rem; cursor: pointer; transition: all 0.2s; }
+  .user-btn-header:hover { background: rgba(0,229,255,0.25); }
+  .user-chip { display: inline-flex; align-items: center; gap: 0.45rem; background: rgba(16,185,129,0.12); border: 1px solid rgba(16,185,129,0.35); color: #a7f3d0; padding: 0.38rem 0.75rem; border-radius: 999px; font-size: 0.78rem; font-weight: 700; }
+  .user-chip button { background: none; border: none; color: #a7f3d0; cursor: pointer; font-weight: 900; line-height: 1; padding: 0 0.2rem; font-size: 1rem; }
+  .user-chip button:hover { color: var(--red); }
+  .header-cta { background: var(--accent); color: #000; border: none; padding: 0.5rem 1.2rem; border-radius: 6px; font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 0.85rem; cursor: pointer; transition: all 0.2s; }
+  .header-cta:hover { background: #fff; }
+  .page { display: none; }
+  .page.active { display: block; }
+  .hero { position: relative; z-index: 1; padding: 6rem 2rem 4rem; text-align: center; max-width: 900px; margin: 0 auto; }
+  .hero-badge { display: inline-block; background: rgba(0,229,255,0.1); border: 1px solid rgba(0,229,255,0.3); color: var(--accent); padding: 0.3rem 1rem; border-radius: 50px; font-size: 0.8rem; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 1.5rem; }
+  .hero h1 { font-family: 'Bebas Neue', sans-serif; font-size: clamp(3.5rem, 10vw, 7rem); line-height: 0.95; letter-spacing: 2px; margin-bottom: 1.5rem; }
+  .hero h1 .line2 { color: var(--accent); }
+  .hero p { font-size: 1.1rem; color: var(--muted); max-width: 550px; margin: 0 auto 2.5rem; line-height: 1.7; }
+  .hero-btns { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+  .btn-primary { background: var(--accent); color: #000; border: none; padding: 0.85rem 2rem; border-radius: 8px; font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 1rem; cursor: pointer; transition: all 0.2s; text-decoration: none; display: inline-flex; align-items: center; gap: 0.5rem; }
+  .btn-primary:hover { background: #fff; transform: translateY(-2px); }
+  .btn-whatsapp { background: #25D366; color: #fff; border: none; padding: 0.85rem 2rem; border-radius: 8px; font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 1rem; cursor: pointer; transition: all 0.2s; text-decoration: none; display: inline-flex; align-items: center; gap: 0.5rem; }
+  .btn-whatsapp:hover { background: #1ebe5d; transform: translateY(-2px); }
+  .stats { position: relative; z-index: 1; display: flex; justify-content: center; gap: 3rem; flex-wrap: wrap; padding: 2rem; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); background: var(--surface); margin-bottom: 5rem; }
+  .stat { text-align: center; }
+  .stat-num { font-family: 'Bebas Neue', sans-serif; font-size: 2.5rem; color: var(--accent); line-height: 1; }
+  .stat-label { font-size: 0.8rem; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; }
+  .section { position: relative; z-index: 1; max-width: 1200px; margin: 0 auto; padding: 0 2rem 5rem; }
+  .section-title { font-family: 'Bebas Neue', sans-serif; font-size: 3rem; letter-spacing: 2px; margin-bottom: 0.5rem; }
+  .section-title span { color: var(--accent); }
+  .section-sub { color: var(--muted); margin-bottom: 3rem; font-size: 1rem; }
+  .services-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 1.5rem; }
+  .service-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 1.8rem; transition: all 0.3s; position: relative; overflow: hidden; }
+  .service-card::before { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(0,229,255,0.05) 0%, transparent 60%); opacity: 0; transition: opacity 0.3s; }
+  .service-card:hover { border-color: var(--accent); transform: translateY(-4px); box-shadow: 0 20px 40px rgba(0,0,0,0.4); }
+  .service-card:hover::before { opacity: 1; }
+  .service-card.open { border-color: var(--accent); }
+  .service-details { max-height: 0; overflow: hidden; transition: max-height 0.25s ease; margin-top: 0; }
+  .service-card.open .service-details { max-height: 220px; margin-top: 0.8rem; }
+  .service-details ul { margin: 0; padding-left: 1rem; color: #b7b7d9; font-size: 0.82rem; line-height: 1.45; }
+  .service-icon { font-size: 2.2rem; margin-bottom: 1rem; display: block; }
+  .service-name { font-weight: 700; font-size: 1.05rem; margin-bottom: 0.5rem; }
+  .service-desc { color: var(--muted); font-size: 0.88rem; line-height: 1.6; margin-bottom: 1rem; }
+  .service-price { font-family: 'Bebas Neue', sans-serif; font-size: 1.4rem; letter-spacing: 1px; }
+  .price-green { color: var(--green); } .price-accent { color: var(--accent); } .price-amber { color: var(--accent3); } .price-purple { color: #a78bfa; }
+  .order-section { position: relative; z-index: 1; background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 5rem 2rem; margin-bottom: 5rem; }
+  .order-inner { max-width: 1000px; margin: 0 auto; }
+  .order-options { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 3rem; }
+  .order-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 2.5rem; }
+  .order-card.featured { border-color: #25D366; box-shadow: 0 0 30px rgba(37,211,102,0.1); }
+  .order-card h3 { font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem; letter-spacing: 1px; margin-bottom: 0.5rem; }
+  .order-card > p { color: var(--muted); font-size: 0.9rem; margin-bottom: 1.8rem; line-height: 1.6; }
+  .form-group { margin-bottom: 1.2rem; }
+  label { display: block; font-size: 0.82rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 0.4rem; }
+  input, select, textarea { width: 100%; background: var(--bg); border: 1px solid var(--border); color: var(--text); padding: 0.75rem 1rem; border-radius: 8px; font-family: 'Outfit', sans-serif; font-size: 0.95rem; transition: border-color 0.2s; outline: none; }
+  input:focus, select:focus, textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(0,229,255,0.1); }
+  select option { background: var(--card); }
+  textarea { resize: vertical; min-height: 90px; }
+  .file-input-native { display: none; }
+  .file-picker {
+    display: flex; align-items: center; gap: 0.7rem;
+    background: var(--bg); border: 1px solid var(--border); border-radius: 10px;
+    padding: 0.5rem; transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .file-picker:focus-within {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(0,229,255,0.1);
+  }
+  .file-picker-btn {
+    display: inline-flex; align-items: center; justify-content: center;
+    background: linear-gradient(135deg, rgba(0,229,255,0.22), rgba(124,58,237,0.28));
+    border: 1px solid rgba(0,229,255,0.45); color: var(--text);
+    border-radius: 8px; padding: 0.55rem 0.9rem; font-size: 0.83rem; font-weight: 700;
+    cursor: pointer; white-space: nowrap; transition: all 0.2s;
+  }
+  .file-picker-btn:hover { border-color: var(--accent); transform: translateY(-1px); }
+  .file-picker-text {
+    color: var(--muted); font-size: 0.84rem; line-height: 1.3;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1;
+  }
+  .file-list {
+    margin-top: 0.5rem; color: #9fe8ff; font-size: 0.78rem; line-height: 1.4;
+    word-break: break-word;
+  }
+  .variant-wrap { margin-bottom: 1rem; }
+  .variant-board {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 0.55rem; margin-top: 0.45rem;
+  }
+  .variant-card {
+    border: 1px solid var(--border); background: rgba(0,0,0,0.22);
+    border-radius: 10px; padding: 0.7rem 0.8rem; font-size: 0.82rem;
+    color: #c6c6e8; cursor: pointer; transition: all 0.18s;
+    line-height: 1.35; font-weight: 600;
+  }
+  .variant-card:hover { border-color: var(--accent); color: #e9feff; transform: translateY(-1px); }
+  .variant-card.selected {
+    border-color: var(--accent);
+    background: linear-gradient(135deg, rgba(0,229,255,0.16), rgba(124,58,237,0.16));
+    color: #ffffff;
+  }
+  .btn-submit { width: 100%; background: var(--accent); color: #000; border: none; padding: 1rem; border-radius: 8px; font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 1rem; cursor: pointer; transition: all 0.2s; margin-top: 0.5rem; }
+  .btn-submit:hover { background: #fff; transform: translateY(-2px); }
+  .btn-wa-big { width: 100%; background: #25D366; color: #fff; border: none; padding: 1rem; border-radius: 8px; font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 1rem; cursor: pointer; transition: all 0.2s; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 0.6rem; }
+  .btn-wa-big:hover { background: #1ebe5d; transform: translateY(-2px); }
+  .wa-number { font-family: 'Bebas Neue', sans-serif; font-size: 2rem; color: #25D366; letter-spacing: 2px; margin: 1rem 0; }
+  .wa-steps { list-style: none; margin-bottom: 1.5rem; }
+  .wa-steps li { color: var(--muted); font-size: 0.88rem; padding: 0.4rem 0; display: flex; gap: 0.5rem; line-height: 1.5; }
+  .wa-steps li::before { content: '✓'; color: #25D366; font-weight: 700; flex-shrink: 0; }
+  footer { position: relative; z-index: 1; background: var(--surface); border-top: 1px solid var(--border); padding: 3rem 2rem; text-align: center; }
+  .footer-logo { font-family: 'Bebas Neue', sans-serif; font-size: 2.5rem; color: var(--accent); letter-spacing: 4px; margin-bottom: 0.5rem; }
+  footer p { color: var(--muted); font-size: 0.85rem; margin-bottom: 0.3rem; }
+  .divider { width: 60px; height: 3px; background: var(--accent); margin-bottom: 1.5rem; border-radius: 2px; }
+  .toast { position: fixed; bottom: 2rem; right: 2rem; background: var(--green); color: #fff; padding: 1rem 1.5rem; border-radius: 10px; font-weight: 600; font-size: 0.95rem; z-index: 999; transform: translateY(120px); opacity: 0; transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); box-shadow: 0 10px 30px rgba(0,0,0,0.4); max-width: 320px; }
+  .toast.show { transform: translateY(0); opacity: 1; }
+  .floating-wa { position: fixed; bottom: 2rem; left: 2rem; z-index: 200; background: #25D366; color: #fff; width: 56px; height: 56px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.6rem; text-decoration: none; box-shadow: 0 4px 20px rgba(37,211,102,0.5); transition: transform 0.2s; animation: pulse-wa 2s infinite; }
+  .floating-wa:hover { transform: scale(1.1); }
+  @keyframes pulse-wa { 0%, 100% { box-shadow: 0 4px 20px rgba(37,211,102,0.5); } 50% { box-shadow: 0 4px 30px rgba(37,211,102,0.8); } }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+  .pedidos-page { position: relative; z-index: 1; max-width: 860px; margin: 0 auto; padding: 4rem 2rem 6rem; }
+  .pedidos-page h2 { font-family: 'Bebas Neue', sans-serif; font-size: 3rem; letter-spacing: 2px; margin-bottom: 0.3rem; }
+  .pedidos-page h2 span { color: var(--accent); }
+  .pedidos-intro { color: var(--muted); margin-bottom: 2.5rem; font-size: 1rem; line-height: 1.6; }
+  .pedido-form-box { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 2.5rem; margin-bottom: 2rem; }
+  .pedido-form-box h3 { font-family: 'Bebas Neue', sans-serif; font-size: 1.7rem; letter-spacing: 1px; margin-bottom: 0.4rem; color: var(--accent); }
+  .pedido-form-box > p { color: var(--muted); font-size: 0.88rem; margin-bottom: 1.5rem; }
+  .my-orders-box { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 1.5rem; margin-bottom: 2rem; }
+  .my-orders-box h3 { font-family: 'Bebas Neue', sans-serif; letter-spacing: 1px; margin-bottom: 0.5rem; font-size: 1.5rem; color: #a78bfa; }
+  .my-order-item { border: 1px solid var(--border); border-radius: 12px; padding: 0.9rem; margin-top: 0.7rem; background: rgba(0,0,0,0.18); }
+  .my-order-head { display: flex; justify-content: space-between; gap: 1rem; font-size: 0.82rem; color: var(--muted); margin-bottom: 0.45rem; flex-wrap: wrap; }
+  .my-order-price { color: #86efac; font-weight: 800; font-size: 0.9rem; }
+  .my-order-comment { color: #c8c8e6; font-size: 0.82rem; margin-top: 0.35rem; white-space: pre-wrap; }
+  .decision-row { display: flex; gap: 0.45rem; flex-wrap: wrap; margin-top: 0.55rem; }
+  .decision-btn {
+    border: 1px solid var(--border); background: rgba(0,0,0,0.25); color: #d9d9f1;
+    border-radius: 8px; padding: 0.35rem 0.7rem; font-size: 0.77rem; cursor: pointer;
+  }
+  .decision-btn.active-yes { border-color: #22c55e; color: #86efac; }
+  .decision-btn.active-no { border-color: #ef4444; color: #fca5a5; }
+  .my-order-textarea { margin-top: 0.45rem; min-height: 62px; font-size: 0.8rem; }
+  .user-response-pill { display:inline-block; margin-top:6px; font-size:0.73rem; border-radius:999px; padding:0.2rem 0.55rem; border:1px solid var(--border); }
+  .user-response-yes { color:#86efac; border-color:#22c55e; }
+  .user-response-no { color:#fca5a5; border-color:#ef4444; }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); z-index: 500; align-items: center; justify-content: center; }
+  .modal-overlay.open { display: flex; }
+  .modal-box { background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 2.5rem; width: 100%; max-width: 420px; position: relative; animation: fadeUp 0.3s ease; }
+  .modal-box h3 { font-family: 'Bebas Neue', sans-serif; font-size: 2rem; letter-spacing: 2px; margin-bottom: 0.3rem; color: var(--accent2); }
+  .modal-sub { color: var(--muted); font-size: 0.85rem; margin-bottom: 2rem; }
+  .btn-login { width: 100%; background: var(--accent2); color: #fff; border: none; padding: 1rem; border-radius: 8px; font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 1rem; cursor: pointer; transition: all 0.2s; margin-top: 0.5rem; }
+  .btn-login:hover { background: #6d28d9; transform: translateY(-2px); }
+  .modal-close { position: absolute; top: 1rem; right: 1rem; background: none; border: none; color: var(--muted); font-size: 1.5rem; cursor: pointer; transition: color 0.2s; line-height: 1; }
+  .modal-close:hover { color: var(--red); }
+  .login-error { background: rgba(239,68,68,0.15); border: 1px solid rgba(239,68,68,0.4); color: #fca5a5; padding: 0.75rem 1rem; border-radius: 8px; font-size: 0.88rem; margin-bottom: 1rem; display: none; }
+  .login-error.show { display: block; }
+  .auth-error { background: rgba(239,68,68,0.15); border: 1px solid rgba(239,68,68,0.4); color: #fca5a5; padding: 0.75rem 1rem; border-radius: 8px; font-size: 0.88rem; margin-bottom: 1rem; display: none; }
+  .auth-error.show { display: block; }
+  .auth-note { color: var(--muted); font-size: 0.82rem; line-height: 1.5; margin-top: 0.5rem; }
+  .user-modal-title { color: var(--accent); }
+  .auth-switch { display: flex; gap: 0.4rem; margin-bottom: 1rem; }
+  .auth-tab {
+    flex: 1; border: 1px solid var(--border); background: rgba(0,0,0,0.2); color: var(--muted);
+    border-radius: 8px; padding: 0.55rem 0.7rem; font-weight: 700; cursor: pointer;
+  }
+  .auth-tab.active { border-color: var(--accent); color: var(--accent); background: rgba(0,229,255,0.12); }
+  .auth-panel { display: none; }
+  .auth-panel.active { display: block; }
+  .user-modal-locked .modal-close { display: none; }
+  .admin-page { position: relative; z-index: 1; max-width: 1100px; margin: 0 auto; padding: 3rem 2rem 6rem; }
+  .admin-topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem; }
+  .admin-topbar h2 { font-family: 'Bebas Neue', sans-serif; font-size: 2.5rem; letter-spacing: 2px; }
+  .admin-topbar h2 span { color: var(--accent2); }
+  .btn-logout { background: rgba(239,68,68,0.15); border: 1px solid rgba(239,68,68,0.4); color: #fca5a5; padding: 0.5rem 1.2rem; border-radius: 8px; font-family: 'Outfit', sans-serif; font-weight: 600; font-size: 0.85rem; cursor: pointer; transition: all 0.2s; }
+  .btn-logout:hover { background: rgba(239,68,68,0.3); }
+  .admin-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 2.5rem; }
+  .admin-stat-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; text-align: center; }
+  .admin-stat-num { font-family: 'Bebas Neue', sans-serif; font-size: 2.8rem; line-height: 1; }
+  .admin-stat-label { color: var(--muted); font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.8px; margin-top: 0.3rem; }
+  .admin-filters { display: flex; gap: 0.7rem; flex-wrap: wrap; margin-bottom: 1.5rem; align-items: center; }
+  .filter-btn { background: var(--card); border: 1px solid var(--border); color: var(--muted); padding: 0.4rem 1rem; border-radius: 50px; font-size: 0.82rem; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: 'Outfit', sans-serif; }
+  .filter-btn:hover, .filter-btn.active { background: var(--accent); color: #000; border-color: var(--accent); }
+  .search-input { flex: 1; min-width: 180px; max-width: 280px; padding: 0.45rem 1rem; font-size: 0.88rem; }
+  .orders-table-wrap { background: var(--card); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; }
+  .table-header { display: flex; align-items: center; justify-content: space-between; padding: 1.2rem 1.5rem; border-bottom: 1px solid var(--border); }
+  .table-header span { font-weight: 700; font-size: 1rem; }
+  .table-header small { color: var(--muted); font-size: 0.82rem; }
+  table { width: 100%; border-collapse: collapse; }
+  thead th { background: var(--surface); color: var(--muted); font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; padding: 0.9rem 1.2rem; text-align: left; white-space: nowrap; }
+  tbody tr { border-bottom: 1px solid var(--border); transition: background 0.15s; }
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:hover { background: rgba(255,255,255,0.02); }
+  td { padding: 1rem 1.2rem; font-size: 0.87rem; vertical-align: middle; }
+  .td-name { font-weight: 700; }
+  .td-phone { color: var(--muted); font-size: 0.8rem; }
+  .td-service { color: var(--accent); font-weight: 600; }
+  .td-date { color: var(--muted); font-size: 0.8rem; white-space: nowrap; }
+  .td-details { color: var(--muted); font-size: 0.81rem; max-width: 180px; }
+  .badge { display: inline-block; padding: 0.25rem 0.75rem; border-radius: 50px; font-size: 0.73rem; font-weight: 700; letter-spacing: 0.5px; white-space: nowrap; }
+  .badge-pending { background: rgba(245,158,11,0.15); color: var(--accent3); border: 1px solid rgba(245,158,11,0.3); }
+  .badge-done { background: rgba(16,185,129,0.15); color: var(--green); border: 1px solid rgba(16,185,129,0.3); }
+  .badge-cancelled { background: rgba(239,68,68,0.15); color: var(--red); border: 1px solid rgba(239,68,68,0.3); }
+  .btn-action { background: none; border: 1px solid var(--border); color: var(--muted); padding: 0.22rem 0.65rem; border-radius: 6px; font-size: 0.73rem; cursor: pointer; transition: all 0.2s; font-family: 'Outfit', sans-serif; margin-right: 0.25rem; margin-bottom: 0.2rem; white-space: nowrap; }
+  .btn-action:hover { border-color: var(--accent); color: var(--accent); }
+  .btn-action.done:hover { border-color: var(--green); color: var(--green); }
+  .btn-action.del:hover { border-color: var(--red); color: var(--red); }
+  .admin-file-tools {
+    margin-top: 8px;
+    padding: 0.55rem;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: rgba(0,0,0,0.2);
+  }
+  .admin-file-input {
+    width: 100%;
+    font-size: 0.74rem;
+    color: #cfe8ff;
+    border: 1px solid rgba(0,229,255,0.2);
+    border-radius: 8px;
+    background: rgba(10,10,16,0.85);
+    padding: 0.42rem 0.5rem;
+  }
+  .admin-file-input::file-selector-button {
+    background: linear-gradient(135deg, rgba(0,229,255,0.22), rgba(124,58,237,0.28));
+    color: var(--text);
+    border: 1px solid rgba(0,229,255,0.4);
+    border-radius: 7px;
+    padding: 0.28rem 0.6rem;
+    margin-right: 0.55rem;
+    cursor: pointer;
+    font-weight: 700;
+    font-family: 'Outfit', sans-serif;
+  }
+  .admin-file-btn {
+    width: 100%;
+    margin-top: 0.5rem;
+    background: linear-gradient(135deg, rgba(16,185,129,0.25), rgba(0,229,255,0.22));
+    border: 1px solid rgba(16,185,129,0.45);
+    color: #d1fae5;
+    border-radius: 8px;
+    padding: 0.44rem 0.6rem;
+    font-size: 0.76rem;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .admin-file-btn:hover { filter: brightness(1.08); transform: translateY(-1px); }
+  .empty-state { text-align: center; padding: 4rem 2rem; color: var(--muted); }
+  .empty-state .empty-icon { font-size: 3rem; margin-bottom: 1rem; opacity: 0.5; }
+  .admin-users-wrap { margin-top: 1.5rem; background: var(--card); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; }
+  .admin-users-head { padding: 1.2rem 1.5rem; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap; }
+  .admin-users-head span { font-weight: 800; }
+  .admin-users-body { padding: 1.5rem; }
+  .admin-users-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .mini-btn { background: var(--accent2); color: #fff; border: none; padding: 0.7rem 1rem; border-radius: 10px; font-weight: 900; cursor: pointer; transition: all 0.2s; width: 100%; font-family: 'Outfit', sans-serif; }
+  .mini-btn:hover { background: #6d28d9; transform: translateY(-1px); }
+  .mini-btn.red { background: rgba(239,68,68,0.15); border: 1px solid rgba(239,68,68,0.35); color: #fca5a5; }
+  .mini-btn.red:hover { background: rgba(239,68,68,0.28); transform: none; }
+  @media (max-width: 768px) { nav { display: none; } .order-options { grid-template-columns: 1fr; } .form-row { grid-template-columns: 1fr; } .admin-stats { grid-template-columns: 1fr 1fr; } .admin-users-grid { grid-template-columns: 1fr; } td, thead th { padding: 0.7rem 0.8rem; } .td-details { display: none; } }
+</style>
+</head>
+<body>
+
+<a href="https://wa.me/50251130136" target="_blank" class="floating-wa" title="WhatsApp">💬</a>
+
+<header>
+  <div class="logo" onclick="goPage('home')">Ciber<span>Zone</span></div>
+  <nav>
+    <a onclick="goPage('home')" id="nav-home" class="active">Inicio</a>
+    <a onclick="scrollTo2('#servicios')">Servicios</a>
+    <a onclick="scrollTo2('#precios')">Precios</a>
+    <a onclick="goPage('pedidos')" id="nav-pedidos">Pedidos</a>
+    <a onclick="scrollTo2('#apartar')">Apartar</a>
+  </nav>
+  <div class="header-right">
+    <button class="user-btn-header" id="user-btn" onclick="openUserModal()">👤 Cuenta</button>
+    <span class="user-chip" id="user-chip" style="display:none;">
+      <span id="user-chip-name">Usuario</span>
+      <button onclick="userLogout()" title="Cerrar sesión">✕</button>
+    </span>
+    <button class="admin-btn-header" onclick="openLoginModal()">🔐 Admin</button>
+    <button class="header-cta" onclick="scrollTo2('#apartar')">Hacer Pedido</button>
+  </div>
+</header>
+
+<!-- HOME -->
+<div class="page active" id="page-home">
+  <div class="hero">
+    <span class="hero-badge">🌐 Café Internet Guatemala</span>
+    <h1>CIBER<br><span class="line2">ZONE</span></h1>
+    <p>Tu lugar de confianza para impresiones, trámites, instalaciones y mucho más. Rápido, accesible y profesional.</p>
+    <div class="hero-btns">
+      <button class="btn-primary" onclick="scrollTo2('#apartar')">📋 Hacer Pedido</button>
+      <a href="https://wa.me/50251130136" target="_blank" class="btn-whatsapp">💬 WhatsApp</a>
+    </div>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><div class="stat-num">500+</div><div class="stat-label">Clientes Atendidos</div></div>
+    <div class="stat"><div class="stat-num">10+</div><div class="stat-label">Servicios</div></div>
+    <div class="stat"><div class="stat-num">100%</div><div class="stat-label">Comprometidos</div></div>
+    <div class="stat"><div class="stat-num">5★</div><div class="stat-label">Calificación</div></div>
+  </div>
+
+
+  <section class="section" id="servicios">
+    <div class="divider"></div>
+    <div class="section-title">NUESTROS <span>SERVICIOS</span></div>
+    <p class="section-sub">Todo lo que necesitas en un solo lugar.</p>
+    <div class="services-grid">
+      <div class="service-card" onclick="toggleServiceCard(this)"><span class="service-icon">🖨️</span><div class="service-name">Impresiones</div><div class="service-desc">Documentos, tareas, fotos, formularios y más.</div><div class="service-price price-green">Desde Q1.00</div><div class="service-details"><ul><li>Impresión blanco y negro: Q1.00</li><li>Impresión a color: Q2.00</li></ul></div></div>
+      <div class="service-card" onclick="toggleServiceCard(this)"><span class="service-icon">📚</span><div class="service-name">Trabajos Escolares</div><div class="service-desc">Espacio para que estudiantes dejen sus trabajos y material.</div><div class="service-price price-accent">Precio según trabajo</div><div class="service-details"><ul><li>Adjunta guías, tareas o ejemplos en el formulario</li><li>Admin puede responder con precio y comentario</li></ul></div></div>
+      <div class="service-card" onclick="toggleServiceCard(this)"><span class="service-icon">💻</span><div class="service-name">Instalación Windows</div><div class="service-desc">Instalación según versión requerida.</div><div class="service-price price-amber">Q100 - Q125</div><div class="service-details"><ul><li>Windows 10 instalación: Q100</li><li>Windows 11 instalación: Q125</li></ul></div></div>
+      <div class="service-card" onclick="toggleServiceCard(this)"><span class="service-icon">🪟</span><div class="service-name">Licencias Windows</div><div class="service-desc">Activa tu Windows con licencia correcta.</div><div class="service-price price-purple">Consultar</div><div class="service-details"><ul><li>Licencia Windows 10</li><li>Licencia Windows 11</li><li>Otra versión: consultar precio e indicar versión</li></ul></div></div>
+      <div class="service-card" onclick="toggleServiceCard(this)"><span class="service-icon">🔑</span><div class="service-name">Licencias Office</div><div class="service-desc">Versiones disponibles para equipos personales y de estudio.</div><div class="service-price price-purple">Office 2016/2019/2021</div><div class="service-details"><ul><li>Office 2016</li><li>Office 2019</li><li>Office 2021</li></ul></div></div>
+      <div class="service-card" onclick="toggleServiceCard(this)"><span class="service-icon">📄</span><div class="service-name">Antecedentes y Actas</div><div class="service-desc">Trámites personales y documentos oficiales.</div><div class="service-price price-green">Consultar precio</div><div class="service-details"><ul><li>Antecedentes penales</li><li>Antecedentes policiacos</li><li>Acta de nacimiento</li></ul></div></div>
+      <div class="service-card" onclick="toggleServiceCard(this)"><span class="service-icon">⚡</span><div class="service-name">Pago de Luz</div><div class="service-desc">Pago de factura de luz con gestión en sitio.</div><div class="service-price price-accent">Q5.00 extra por factura</div><div class="service-details"><ul><li>Costo extra de Q5.00 por cada factura</li></ul></div></div>
+      <div class="service-card" onclick="toggleServiceCard(this)"><span class="service-icon">🌐</span><div class="service-name">Internet por Hora</div><div class="service-desc">Conexión rápida y estable para navegar, estudiar o trabajar.</div><div class="service-price price-green">Q5/hora</div><div class="service-details"><ul><li>Uso libre por hora</li></ul></div></div>
+      <div class="service-card" onclick="toggleServiceCard(this)"><span class="service-icon">🛠️</span><div class="service-name">Reparación y Mantenimiento</div><div class="service-desc">Estado actual del servicio técnico.</div><div class="service-price price-accent">No disponible</div><div class="service-details"><ul><li>Por el momento no disponible</li></ul></div></div>
+    </div>
+  </section>
+
+  <div class="order-section" id="apartar">
+    <div class="order-inner">
+      <div class="divider"></div>
+      <div class="section-title">HACER UN <span>APARTADO</span></div>
+      <p class="section-sub">Elige cómo prefieres hacer tu solicitud.</p>
+      <div class="order-options">
+        <div class="order-card">
+          <h3>📋 Reservar en Línea</h3>
+          <p>Llena el formulario y nos pondremos en contacto contigo para confirmar tu pedido.</p>
+          <div class="form-group"><label>Nombre Completo</label><input type="text" id="nombre" placeholder="Tu nombre completo"></div>
+          <div class="form-group"><label>Teléfono</label><input type="tel" id="telefono" placeholder="Ej: 5555-1234"></div>
+          <div class="form-group"><label>Servicio Requerido</label>
+            <select id="servicio">
+              <option value="">— Selecciona un servicio —</option>
+              <option>Trabajos Escolares</option><option>Impresiones</option><option>Instalación Windows</option>
+              <option>Licencias Windows</option><option>Licencias Office</option><option>Antecedentes y Actas</option><option>Pago de Luz</option>
+              <option>Escaneo de Documentos</option><option>Internet por Hora</option>
+              <option>Reparación y Mantenimiento</option><option>Otro</option>
+            </select>
+          </div>
+          <div class="form-group variant-wrap" id="servicio-variant-wrap" style="display:none;">
+            <label>Opciones del servicio</label>
+            <input type="hidden" id="servicio-variant" value="">
+            <div class="variant-board" id="servicio-variant-board"></div>
+          </div>
+          <div class="auth-note" id="servicio-hint" style="margin-bottom:1rem;"></div>
+          <div class="form-group"><label>Detalles Adicionales</label><textarea id="detalles" placeholder="Describe lo que necesitas, fecha preferida, etc."></textarea></div>
+          <div class="form-group">
+            <label>Archivos (opcional, max 50 MB por archivo)</label>
+            <input type="file" id="archivos" class="file-input-native" multiple>
+            <div class="file-picker">
+              <label for="archivos" class="file-picker-btn">📎 Elegir archivos</label>
+              <span class="file-picker-text" id="archivos-text">Ningún archivo seleccionado</span>
+            </div>
+            <div class="file-list" id="archivos-list"></div>
+          </div>
+          <button class="btn-submit" id="btn-send-home" onclick="enviarFormulario()">📨 Enviar Solicitud</button>
+          <div class="auth-note" id="home-order-auth-note" style="margin-top:0.5rem;"></div>
+        </div>
+        <div class="order-card featured">
+          <h3>💬 <span style="color:#25D366">WhatsApp</span></h3>
+          <p>Contáctanos directamente por WhatsApp. Es la forma más rápida de hacer tu pedido.</p>
+          <div class="wa-number">+502 5113-0136</div>
+          <ul class="wa-steps">
+            <li>Escríbenos qué servicio necesitas</li>
+            <li>Cuéntanos los detalles de tu pedido</li>
+            <li>Te confirmamos disponibilidad y precio</li>
+            <li>¡Listo! Te esperamos en el local</li>
+          </ul>
+          <a href="https://wa.me/50251130136?text=Hola%20CiberZone%20%F0%9F%91%8B,%20quiero%20apartar%20un%20servicio." target="_blank" class="btn-wa-big">💬 Abrir WhatsApp Ahora</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+  <footer>
+    <div class="footer-logo">CiberZone</div>
+    <p>📍 Tu Café Internet de Confianza</p>
+    <p>📞 +502 5113-0136</p>
+    <p style="margin-top:1rem;">Impresiones • Trámites • Instalaciones • Internet</p>
+    <p style="margin-top:1rem;font-size:0.75rem;color:#3a3a5a;">© 2025 CiberZone · Todos los derechos reservados</p>
+  </footer>
+</div>
+
+<!-- PEDIDOS -->
+<div class="page" id="page-pedidos">
+  <div class="pedidos-page">
+    <div class="divider"></div>
+    <h2>HACER UN <span>PEDIDO</span></h2>
+    <p class="pedidos-intro">Registra tu pedido aquí. El administrador lo verá y te contactará para confirmar la fecha y el precio.</p>
+    <div class="pedido-form-box">
+      <h3>📝 Nuevo Pedido</h3>
+      <p>Completa el formulario y tu pedido quedará registrado de inmediato.</p>
+      <div class="form-row">
+        <div class="form-group"><label>Nombre Completo *</label><input type="text" id="p-nombre" placeholder="Tu nombre completo"></div>
+        <div class="form-group"><label>Teléfono *</label><input type="tel" id="p-tel" placeholder="Ej: 5555-1234"></div>
+      </div>
+      <div class="form-group"><label>Servicio que necesitas *</label>
+        <select id="p-servicio">
+          <option value="">— Selecciona un servicio —</option>
+          <option>Trabajos Escolares</option><option>Impresiones</option><option>Instalación Windows</option>
+          <option>Licencias Windows</option><option>Licencias Office</option><option>Antecedentes y Actas</option><option>Pago de Luz</option>
+          <option>Escaneo de Documentos</option><option>Internet por Hora</option>
+          <option>Reparación y Mantenimiento</option><option>Otro</option>
+        </select>
+      </div>
+      <div class="form-group variant-wrap" id="p-servicio-variant-wrap" style="display:none;">
+        <label>Opciones del servicio *</label>
+        <input type="hidden" id="p-servicio-variant" value="">
+        <div class="variant-board" id="p-servicio-variant-board"></div>
+      </div>
+      <div class="auth-note" id="p-servicio-hint" style="margin-bottom:1rem;"></div>
+      <div class="form-group"><label>Fecha preferida (opcional)</label><input type="date" id="p-fecha"></div>
+      <div class="form-group"><label>Descripción del pedido *</label><textarea id="p-desc" rows="4" placeholder="Describe con detalle lo que necesitas: cantidad, formato, urgencia, etc."></textarea></div>
+      <div class="form-group">
+        <label>Adjuntar archivos (opcional, max 50 MB por archivo)</label>
+        <input type="file" id="p-archivos" class="file-input-native" multiple>
+        <div class="file-picker">
+          <label for="p-archivos" class="file-picker-btn">📎 Seleccionar archivos</label>
+          <span class="file-picker-text" id="p-archivos-text">Ningún archivo seleccionado</span>
+        </div>
+        <div class="file-list" id="p-archivos-list"></div>
+      </div>
+      <button class="btn-submit" id="btn-send-pedido" onclick="registrarPedido()">✅ Registrar Pedido</button>
+      <div class="auth-note" id="pedido-order-auth-note" style="margin-top:0.5rem;"></div>
+    </div>
+    <div class="my-orders-box">
+      <h3>📦 Mis pedidos</h3>
+      <p class="auth-note" style="margin-bottom:0.6rem;">Inicia sesión para ver el comentario y precio que te dejó el administrador.</p>
+      <div id="my-orders-container" style="color:var(--muted);font-size:0.85rem;">Inicia sesión para ver tus pedidos.</div>
+    </div>
+    <div style="text-align:center;padding:1.5rem;background:var(--surface);border:1px solid var(--border);border-radius:12px;">
+      <p style="color:var(--muted);margin-bottom:1rem;">¿Prefieres hacerlo por WhatsApp?</p>
+      <a href="https://wa.me/50251130136?text=Hola%20CiberZone!%20Quiero%20hacer%20un%20pedido." target="_blank" class="btn-whatsapp">💬 Pedir por WhatsApp</a>
+    </div>
+  </div>
+</div>
+
+<!-- ADMIN -->
+<div class="page" id="page-admin">
+  <div class="admin-page">
+    <div class="admin-topbar">
+      <h2>PANEL <span>ADMINISTRADOR</span></h2>
+      <button class="btn-logout" onclick="logout()">🚪 Cerrar Sesión</button>
+    </div>
+    <div class="admin-stats">
+      <div class="admin-stat-card"><div class="admin-stat-num" id="stat-total" style="color:var(--accent)">0</div><div class="admin-stat-label">Total Pedidos</div></div>
+      <div class="admin-stat-card"><div class="admin-stat-num" id="stat-pending" style="color:var(--accent3)">0</div><div class="admin-stat-label">Pendientes</div></div>
+      <div class="admin-stat-card"><div class="admin-stat-num" id="stat-done" style="color:var(--green)">0</div><div class="admin-stat-label">Completados</div></div>
+      <div class="admin-stat-card"><div class="admin-stat-num" id="stat-today" style="color:#a78bfa">0</div><div class="admin-stat-label">Hoy</div></div>
+    </div>
+    <div class="admin-filters">
+      <button class="filter-btn active" onclick="filterOrders('all',this)">Todos</button>
+      <button class="filter-btn" onclick="filterOrders('Pendiente',this)">⏳ Pendientes</button>
+      <button class="filter-btn" onclick="filterOrders('Completado',this)">✅ Completados</button>
+      <button class="filter-btn" onclick="filterOrders('Cancelado',this)">❌ Cancelados</button>
+      <input type="text" class="search-input" id="search-input" placeholder="🔍 Buscar..." oninput="renderOrders()">
+    </div>
+    <div class="orders-table-wrap">
+      <div class="table-header">
+        <span>📋 Lista de Pedidos</span>
+        <small id="orders-count">0 pedidos</small>
+      </div>
+      <div id="orders-container">
+        <div class="empty-state"><div class="empty-icon">📭</div><p>No hay pedidos registrados aún.</p></div>
+      </div>
+    </div>
+
+    <div class="admin-users-wrap">
+      <div class="admin-users-head">
+        <span>👥 Gestión de Usuarios</span>
+        <small style="color:var(--muted)">Usuarios que pueden iniciar sesión en el portal público.</small>
+      </div>
+      <div class="admin-users-body">
+        <div class="admin-users-grid">
+          <div>
+            <h3 style="font-family:'Bebas Neue',sans-serif;letter-spacing:1px;margin-bottom:0.6rem;color:var(--accent2)">➕ Crear usuario</h3>
+            <div class="form-group"><label>Usuario</label><input type="text" id="admin-new-user" placeholder="Ej: cliente01"></div>
+            <div class="form-group"><label>Contraseña</label><input type="password" id="admin-new-pass" placeholder="Contraseña"></div>
+            <button class="mini-btn" onclick="adminCreateUser()">Crear Usuario</button>
+          </div>
+          <div>
+            <h3 style="font-family:'Bebas Neue',sans-serif;letter-spacing:1px;margin-bottom:0.6rem;color:var(--accent)">📋 Usuarios creados</h3>
+            <div id="admin-users-list" style="color:var(--muted)">No hay usuarios.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ADMIN LOGIN MODAL -->
+<div class="modal-overlay" id="login-modal">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeLoginModal()">✕</button>
+    <h3>🔐 ACCESO ADMIN</h3>
+    <p class="modal-sub">Solo personal autorizado de CiberZone.</p>
+    <div class="login-error" id="login-error">⚠️ Usuario o contraseña incorrectos.</div>
+    <div class="form-group"><label>Usuario</label><input type="text" id="login-user" placeholder="Usuario" onkeydown="if(event.key==='Enter')doLogin()"></div>
+    <div class="form-group"><label>Contraseña</label><input type="password" id="login-pass" placeholder="Contraseña" onkeydown="if(event.key==='Enter')doLogin()"></div>
+    <button class="btn-login" onclick="doLogin()">Iniciar Sesión →</button>
+  </div>
+</div>
+
+<!-- USER MODAL -->
+<div class="modal-overlay" id="user-modal">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeUserModal()">✕</button>
+    <h3 class="user-modal-title">👤 CUENTA</h3>
+    <p class="modal-sub">Inicia sesión o crea tu cuenta para ver y enviar pedidos privados.</p>
+    <div class="auth-error" id="user-error">⚠️ Error</div>
+    <div class="auth-switch">
+      <button type="button" id="auth-tab-login" class="auth-tab active" onclick="setUserAuthMode('login')">Iniciar sesion</button>
+      <button type="button" id="auth-tab-register" class="auth-tab" onclick="setUserAuthMode('register')">Registrarse</button>
+      <button type="button" id="auth-tab-admin" class="auth-tab" onclick="setUserAuthMode('admin')">Admin</button>
+    </div>
+    <div id="auth-panel-login" class="auth-panel active">
+      <div class="form-group"><label>Usuario</label><input type="text" id="u-login-user" placeholder="Ej: cliente01" onkeydown="if(event.key==='Enter')userLogin()"></div>
+      <div class="form-group"><label>Contrasena</label><input type="password" id="u-login-pass" placeholder="Contrasena" onkeydown="if(event.key==='Enter')userLogin()"></div>
+      <button class="btn-login" style="background:var(--accent)" onclick="userLogin()">Entrar -></button>
+      <div class="auth-note">No tienes cuenta? Toca la pestana <strong>Registrarse</strong> para crearla.</div>
+    </div>
+    <div id="auth-panel-register" class="auth-panel">
+      <div class="form-group"><label>Usuario</label><input type="text" id="u-register-user" placeholder="Minimo 3 caracteres"></div>
+      <div class="form-group"><label>Contrasena</label><input type="password" id="u-register-pass" placeholder="Minimo 4 caracteres"></div>
+      <div class="form-group"><label>Confirmar contrasena</label><input type="password" id="u-register-pass2" placeholder="Repite la contrasena" onkeydown="if(event.key==='Enter')userRegister()"></div>
+      <button class="btn-login" style="background:var(--green)" onclick="userRegister()">Crear cuenta -></button>
+    </div>
+    <div id="auth-panel-admin" class="auth-panel">
+      <div class="form-group"><label>Usuario admin</label><input type="text" id="u-admin-user" placeholder="Usuario administrador" onkeydown="if(event.key==='Enter')userAdminLogin()"></div>
+      <div class="form-group"><label>Contrasena</label><input type="password" id="u-admin-pass" placeholder="Contrasena admin" onkeydown="if(event.key==='Enter')userAdminLogin()"></div>
+      <button class="btn-login" style="background:var(--accent2)" onclick="userAdminLogin()">Entrar como admin -></button>
+      <div class="auth-note">Usa esta pestana solo si eres administrador.</div>
+    </div>
+    <div class="auth-note">Tu sesion protege tus pedidos y archivos.</div>
+  </div>
+</div>
+
+<div class="toast" id="toast">✅ Listo</div>
+
+<script>
+// ─── CONFIG ───────────────────────────────────────────────
+// API_BASE vacío = misma origen (backend .NET sirve el frontend)
+const API_BASE = '';
+let adminToken = null;
+let userToken = null;
+let currentUser = null;
+let userAuthMode = 'login';
+let userAuthLocked = false;
+let userPromptedByInteraction = false;
+let ordersState = [];
+let currentFilter = 'all';
+
+function isLikelyJwt(token) {
+  return typeof token === 'string' && token.split('.').length === 3;
+}
+const SERVICE_VARIANTS = {
+  'Impresiones': {
+    hint: 'Selecciona tipo de impresión.',
+    options: ['Blanco y negro - Q1.00', 'Color - Q2.00']
+  },
+  'Instalación Windows': {
+    hint: 'Instalación según versión.',
+    options: ['Windows 10 instalación - Q100', 'Windows 11 instalación - Q125']
+  },
+  'Licencias Windows': {
+    hint: 'Si eliges otra versión, indica la versión requerida.',
+    options: ['Licencia Windows 10', 'Licencia Windows 11', 'Otra versión (consultar precio)']
+  },
+  'Licencias Office': {
+    hint: 'Versiones disponibles actualmente.',
+    options: ['Office 2016', 'Office 2019', 'Office 2021']
+  },
+  'Antecedentes y Actas': {
+    hint: 'Selecciona el trámite que necesitas.',
+    options: ['Antecedentes penales', 'Antecedentes policiacos', 'Acta de nacimiento']
+  },
+  'Pago de Luz': {
+    hint: 'Costo extra de Q5.00 por factura.',
+    options: ['Pago de factura (Q5.00 extra por factura)']
+  },
+  'Reparación y Mantenimiento': {
+    hint: 'Por el momento no disponible.',
+    options: ['Por el momento no disponible']
+  },
+  'Trabajos Escolares': {
+    hint: 'Adjunta tus archivos y el admin te responderá con comentario/precio.',
+    options: ['Tarea / investigación', 'Presentación', 'Documento para corregir']
+  }
+};
+
+// ─── HELPERS ──────────────────────────────────────────────
+function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function showToast(msg, isError = false) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.style.background = isError ? 'var(--red)' : 'var(--green)';
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 4000);
+}
+
+async function apiFetch(path, options = {}, token = null) {
+  const headers = { ...(options.headers || {}) };
+  const isFormData = typeof FormData !== 'undefined' && options.body instanceof FormData;
+  if (!isFormData && !headers['Content-Type']) headers['Content-Type'] = 'application/json';
+  if (token) headers['Authorization'] = 'Bearer ' + token;
+  const res = await fetch(API_BASE + path, { ...options, headers });
+  if (res.status === 204) return null;
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(data.message || 'Error ' + res.status);
+  return data;
+}
+
+function collectValidFiles(inputId) {
+  const maxBytes = 50 * 1024 * 1024;
+  const input = document.getElementById(inputId);
+  const files = Array.from((input && input.files) ? input.files : []);
+  const tooLarge = files.find(f => f.size > maxBytes);
+  if (tooLarge) {
+    throw new Error(`El archivo "${tooLarge.name}" excede 50 MB.`);
+  }
+  return files;
+}
+
+function refreshFilePreview(inputId, textId, listId) {
+  const input = document.getElementById(inputId);
+  const text = document.getElementById(textId);
+  const list = document.getElementById(listId);
+  if (!input || !text || !list) return;
+
+  const files = Array.from(input.files || []);
+  if (files.length === 0) {
+    text.textContent = 'Ningún archivo seleccionado';
+    list.innerHTML = '';
+    return;
+  }
+
+  text.textContent = files.length === 1
+    ? files[0].name
+    : `${files.length} archivos seleccionados`;
+
+  list.innerHTML = files
+    .map(f => `• ${esc(f.name)} (${(f.size / 1024 / 1024).toFixed(2)} MB)`)
+    .join('<br>');
+}
+
+function attachmentSummaryHtml(archivosJson) {
+  const meta = parseOrderMeta(archivosJson);
+  if (!meta.files.length) return '';
+  const links = meta.files
+    .filter(x => x && x.url)
+    .map(x => `<a href="${esc(x.url)}" target="_blank" rel="noopener" style="color:var(--accent);font-size:0.75rem;display:block">📎 ${esc(x.name || 'archivo')}</a>`)
+    .join('');
+  return links ? `<div style="margin-top:6px">${links}</div>` : '';
+}
+
+function parseOrderMeta(archivosJson) {
+  if (!archivosJson) return { files: [], adminFiles: [], adminPrecio: '', adminComentario: '', userDecision: '', userComentario: '', userRespondedAt: '' };
+  try {
+    const parsed = JSON.parse(archivosJson);
+    if (Array.isArray(parsed)) return { files: parsed, adminFiles: [], adminPrecio: '', adminComentario: '', userDecision: '', userComentario: '', userRespondedAt: '' };
+    return {
+      files: Array.isArray(parsed.files) ? parsed.files : [],
+      adminFiles: Array.isArray(parsed.adminFiles) ? parsed.adminFiles : [],
+      adminPrecio: parsed.adminPrecio || '',
+      adminComentario: parsed.adminComentario || '',
+      userDecision: parsed.userDecision || '',
+      userComentario: parsed.userComentario || '',
+      userRespondedAt: parsed.userRespondedAt || ''
+    };
+  } catch {
+    return { files: [], adminFiles: [], adminPrecio: '', adminComentario: '', userDecision: '', userComentario: '', userRespondedAt: '' };
+  }
+}
+
+function escAttr(s) {
+  return String(s || '').replace(/"/g, '&quot;');
+}
+
+function updateServiceVariant(baseId, variantWrapId, variantId, hintId, boardId) {
+  const serviceEl = document.getElementById(baseId);
+  const wrap = document.getElementById(variantWrapId);
+  const variant = document.getElementById(variantId);
+  const hint = document.getElementById(hintId);
+  const board = document.getElementById(boardId);
+  if (!serviceEl || !wrap || !variant || !hint || !board) return;
+
+  const selected = serviceEl.value;
+  const cfg = SERVICE_VARIANTS[selected];
+  if (!cfg) {
+    wrap.style.display = 'none';
+    variant.value = '';
+    board.innerHTML = '';
+    hint.textContent = '';
+    return;
+  }
+
+  variant.value = '';
+  board.innerHTML = cfg.options
+    .map(o => `<button type="button" class="variant-card" data-value="${escAttr(o)}">${esc(o)}</button>`)
+    .join('');
+
+  board.querySelectorAll('.variant-card').forEach(btn => {
+    btn.addEventListener('click', () => {
+      board.querySelectorAll('.variant-card').forEach(x => x.classList.remove('selected'));
+      btn.classList.add('selected');
+      variant.value = btn.getAttribute('data-value') || '';
+    });
+  });
+
+  wrap.style.display = 'block';
+  hint.textContent = cfg.hint;
+}
+
+function buildServiceName(baseId, variantId) {
+  const base = (document.getElementById(baseId)?.value || '').trim();
+  const variant = (document.getElementById(variantId)?.value || '').trim();
+  if (!base) return '';
+  return variant ? `${base} | ${variant}` : base;
+}
+
+function validateVariant(serviceId, variantId) {
+  const service = (document.getElementById(serviceId)?.value || '').trim();
+  const variant = (document.getElementById(variantId)?.value || '').trim();
+  if (SERVICE_VARIANTS[service] && !variant) {
+    alert('Selecciona una opción del servicio.');
+    return false;
+  }
+  return true;
+}
+
+function toggleServiceCard(card) {
+  if (!card) return;
+  card.classList.toggle('open');
+}
+
+// ─── NAVIGATION ───────────────────────────────────────────
+function goPage(page) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  ['nav-home','nav-pedidos'].forEach(id => { const el = document.getElementById(id); if(el) el.classList.remove('active'); });
+  if (page === 'admin') {
+    if (!adminToken) { openLoginModal(); return; }
+    document.getElementById('page-admin').classList.add('active');
+    loadAndRender();
+  } else if (page === 'pedidos') {
+    document.getElementById('page-pedidos').classList.add('active');
+    document.getElementById('nav-pedidos').classList.add('active');
+    renderMyOrders();
+  } else {
+    document.getElementById('page-home').classList.add('active');
+    document.getElementById('nav-home').classList.add('active');
+  }
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function scrollTo2(sel) {
+  if (!document.getElementById('page-home').classList.contains('active')) {
+    goPage('home');
+    setTimeout(() => { const el = document.querySelector(sel); if(el) el.scrollIntoView({behavior:'smooth'}); }, 200);
+  } else {
+    const el = document.querySelector(sel);
+    if(el) el.scrollIntoView({behavior:'smooth'});
+  }
+}
+
+// ─── ADMIN LOGIN ──────────────────────────────────────────
+function openLoginModal() {
+  document.getElementById('login-modal').classList.add('open');
+  document.getElementById('login-error').classList.remove('show');
+  setTimeout(() => document.getElementById('login-user').focus(), 150);
+}
+function closeLoginModal() { document.getElementById('login-modal').classList.remove('open'); }
+document.getElementById('login-modal').addEventListener('click', function(e){ if(e.target===this) closeLoginModal(); });
+
+async function doLogin() {
+  const u = document.getElementById('login-user').value.trim();
+  const p = document.getElementById('login-pass').value;
+  try {
+    const data = await apiFetch('/api/auth/login', { method:'POST', body: JSON.stringify({ username: u, password: p }) });
+    if (data.rol !== 'admin') { document.getElementById('login-error').classList.add('show'); return; }
+    adminToken = data.token;
+    sessionStorage.setItem('czAdminToken', adminToken);
+    closeLoginModal();
+    goPage('admin');
+    showToast('✅ Bienvenido, Administrador');
+  } catch (err) {
+    document.getElementById('login-error').classList.add('show');
+    document.getElementById('login-pass').value = '';
+  }
+}
+
+function logout() {
+  adminToken = null;
+  sessionStorage.removeItem('czAdminToken');
+  goPage('home');
+  showToast('✅ Sesión cerrada.');
+}
+
+// ─── USER LOGIN ───────────────────────────────────────────
+function setUserAuthMode(mode) {
+  userAuthMode = mode === 'register' ? 'register' : mode === 'admin' ? 'admin' : 'login';
+  const loginTab = document.getElementById('auth-tab-login');
+  const registerTab = document.getElementById('auth-tab-register');
+  const adminTab = document.getElementById('auth-tab-admin');
+  const loginPanel = document.getElementById('auth-panel-login');
+  const registerPanel = document.getElementById('auth-panel-register');
+  const adminPanel = document.getElementById('auth-panel-admin');
+  loginTab.classList.toggle('active', userAuthMode === 'login');
+  registerTab.classList.toggle('active', userAuthMode === 'register');
+  adminTab.classList.toggle('active', userAuthMode === 'admin');
+  loginPanel.classList.toggle('active', userAuthMode === 'login');
+  registerPanel.classList.toggle('active', userAuthMode === 'register');
+  adminPanel.classList.toggle('active', userAuthMode === 'admin');
+  clearUserError();
+}
+
+function clearUserError() {
+  const e = document.getElementById('user-error');
+  e.classList.remove('show');
+  e.textContent = '⚠️ Error';
+}
+
+function openUserModal(force = false, mode = null) {
+  userAuthLocked = !!force;
+  const modal = document.getElementById('user-modal');
+  modal.classList.add('open');
+  modal.classList.toggle('user-modal-locked', userAuthLocked);
+  clearUserError();
+  if (mode) setUserAuthMode(mode);
+}
+
+function closeUserModal(force = false) {
+  if (!force && userAuthLocked && !userToken) return;
+  document.getElementById('user-modal').classList.remove('open');
+  document.getElementById('user-modal').classList.remove('user-modal-locked');
+  userAuthLocked = false;
+}
+
+function shouldOpenUserModalFromInteraction(target) {
+  if (userToken || userPromptedByInteraction) return false;
+  if (document.getElementById('user-modal')?.classList.contains('open')) return false;
+  if (document.getElementById('login-modal')?.classList.contains('open')) return false;
+
+  const el = target instanceof Element ? target : null;
+  if (el && el.closest('#user-modal, #login-modal')) return false;
+  return true;
+}
+
+function triggerUserModalByInteraction(target) {
+  if (!shouldOpenUserModalFromInteraction(target)) return;
+  userPromptedByInteraction = true;
+  openUserModal(true, 'login');
+}
+
+function bindUserModalAutoPrompt() {
+  document.addEventListener('pointerdown', e => {
+    triggerUserModalByInteraction(e.target);
+  }, { capture: true, passive: true });
+
+  document.addEventListener('keydown', e => {
+    const k = e.key || '';
+    const isTypingKey = k.length === 1 || k === 'Enter' || k === 'Backspace' || k === 'Delete';
+    if (!isTypingKey) return;
+    triggerUserModalByInteraction(e.target);
+  }, { capture: true });
+}
+
+document.getElementById('user-modal').addEventListener('click', function(e){
+  if(e.target===this) closeUserModal();
+});
+
+async function userLogin() {
+  const u = document.getElementById('u-login-user').value.trim();
+  const p = document.getElementById('u-login-pass').value;
+  try {
+    const data = await apiFetch('/api/auth/login', { method:'POST', body: JSON.stringify({ username: u, password: p }) });
+    userToken = data.token;
+    currentUser = data.username;
+    sessionStorage.setItem('czUserToken', userToken);
+    sessionStorage.setItem('czUserName', currentUser);
+    userPromptedByInteraction = true;
+    updateUserHeader();
+    await renderMyOrders();
+    closeUserModal();
+    showToast('✅ Sesión iniciada como ' + currentUser);
+  } catch (err) {
+    const e = document.getElementById('user-error');
+    e.textContent = '⚠️ ' + (err.message || 'Usuario o contraseña incorrectos.');
+    e.classList.add('show');
+  }
+}
+
+async function userRegister() {
+  const u = document.getElementById('u-register-user').value.trim();
+  const p = document.getElementById('u-register-pass').value;
+  const p2 = document.getElementById('u-register-pass2').value;
+  if (!u || u.length < 3) {
+    const e = document.getElementById('user-error');
+    e.textContent = '⚠️ El usuario debe tener mínimo 3 caracteres.';
+    e.classList.add('show');
+    return;
+  }
+  if (!p || p.length < 4) {
+    const e = document.getElementById('user-error');
+    e.textContent = '⚠️ La contraseña debe tener mínimo 4 caracteres.';
+    e.classList.add('show');
+    return;
+  }
+  if (p !== p2) {
+    const e = document.getElementById('user-error');
+    e.textContent = '⚠️ Las contraseñas no coinciden.';
+    e.classList.add('show');
+    return;
+  }
+  try {
+    const data = await apiFetch('/api/auth/register', {
+      method:'POST',
+      body: JSON.stringify({ username: u, password: p })
+    });
+    userToken = data.token;
+    currentUser = data.username;
+    sessionStorage.setItem('czUserToken', userToken);
+    sessionStorage.setItem('czUserName', currentUser);
+    userPromptedByInteraction = true;
+    updateUserHeader();
+    await renderMyOrders();
+    closeUserModal();
+    showToast('✅ Cuenta creada. Bienvenido, ' + currentUser);
+    document.getElementById('u-register-user').value = '';
+    document.getElementById('u-register-pass').value = '';
+    document.getElementById('u-register-pass2').value = '';
+  } catch (err) {
+    const e = document.getElementById('user-error');
+    e.textContent = '⚠️ ' + (err.message || 'No se pudo crear la cuenta.');
+    e.classList.add('show');
+  }
+}
+
+async function userAdminLogin() {
+  const u = document.getElementById('u-admin-user').value.trim();
+  const p = document.getElementById('u-admin-pass').value;
+  try {
+    const data = await apiFetch('/api/auth/login', { method:'POST', body: JSON.stringify({ username: u, password: p }) });
+    if (data.rol !== 'admin') {
+      const e = document.getElementById('user-error');
+      e.textContent = '⚠️ Esta cuenta no tiene permisos de administrador.';
+      e.classList.add('show');
+      return;
+    }
+    adminToken = data.token;
+    sessionStorage.setItem('czAdminToken', adminToken);
+    closeUserModal(true);
+    goPage('admin');
+    showToast('✅ Bienvenido, Administrador');
+  } catch (err) {
+    const e = document.getElementById('user-error');
+    e.textContent = '⚠️ ' + (err.message || 'Usuario o contraseña incorrectos.');
+    e.classList.add('show');
+  }
+}
+
+function userLogout() {
+  userToken = null; currentUser = null;
+  sessionStorage.removeItem('czUserToken');
+  sessionStorage.removeItem('czUserName');
+  updateUserHeader();
+  renderMyOrders();
+  showToast('✅ Sesión cerrada.');
+  openUserModal(true, 'login');
+}
+
+function updateUserHeader() {
+  const btn = document.getElementById('user-btn');
+  const chip = document.getElementById('user-chip');
+  const nameEl = document.getElementById('user-chip-name');
+  if (currentUser) {
+    nameEl.textContent = currentUser;
+    chip.style.display = 'inline-flex'; btn.style.display = 'none';
+  } else {
+    chip.style.display = 'none'; btn.style.display = 'inline-flex';
+  }
+  updateOrderAuthUI();
+}
+
+function updateOrderAuthUI() {
+  const logged = !!userToken;
+  const homeBtn = document.getElementById('btn-send-home');
+  const pedBtn = document.getElementById('btn-send-pedido');
+  const homeNote = document.getElementById('home-order-auth-note');
+  const pedNote = document.getElementById('pedido-order-auth-note');
+
+  if (homeBtn) {
+    homeBtn.disabled = !logged;
+    homeBtn.style.opacity = logged ? '1' : '0.6';
+    homeBtn.style.cursor = logged ? 'pointer' : 'not-allowed';
+  }
+  if (pedBtn) {
+    pedBtn.disabled = !logged;
+    pedBtn.style.opacity = logged ? '1' : '0.6';
+    pedBtn.style.cursor = logged ? 'pointer' : 'not-allowed';
+  }
+
+  const msg = logged
+    ? 'Sesión activa. Tus pedidos serán privados para tu cuenta.'
+    : 'Debes iniciar sesión para enviar pedidos y mantener tu privacidad.';
+  if (homeNote) homeNote.textContent = msg;
+  if (pedNote) pedNote.textContent = msg;
+}
+
+function requireUserLoginForOrder() {
+  if (userToken) return true;
+  openUserModal();
+  showToast('Inicia sesión para enviar tu pedido.', true);
+  return false;
+}
+
+// ─── PEDIDOS FORMS ────────────────────────────────────────
+async function enviarFormulario() {
+  if (!requireUserLoginForOrder()) return;
+  const nombre = document.getElementById('nombre').value.trim();
+  const telefono = document.getElementById('telefono').value.trim();
+  const servicio = buildServiceName('servicio', 'servicio-variant');
+  const detalles = document.getElementById('detalles').value.trim();
+  if (!nombre || !telefono || !servicio) { alert('Completa: Nombre, Teléfono y Servicio.'); return; }
+  if (!validateVariant('servicio', 'servicio-variant')) return;
+  try {
+    const files = collectValidFiles('archivos');
+    const form = new FormData();
+    form.append('nombre', nombre);
+    form.append('telefono', telefono);
+    form.append('servicio', servicio);
+    form.append('detalles', detalles || '-');
+    form.append('origen', 'Formulario Inicio');
+    files.forEach(f => form.append('archivos', f));
+
+    await apiFetch('/api/orders', {
+      method: 'POST',
+      body: form
+    }, userToken);
+    showToast('✅ Pedido registrado. Te contactaremos pronto.');
+    ['nombre','telefono','detalles'].forEach(id => document.getElementById(id).value = '');
+    document.getElementById('servicio').value = '';
+    updateServiceVariant('servicio', 'servicio-variant-wrap', 'servicio-variant', 'servicio-hint', 'servicio-variant-board');
+    document.getElementById('archivos').value = '';
+    refreshFilePreview('archivos', 'archivos-text', 'archivos-list');
+  } catch(err) { showToast('❌ Error al guardar: ' + err.message, true); }
+}
+
+async function registrarPedido() {
+  if (!requireUserLoginForOrder()) return;
+  const nombre = document.getElementById('p-nombre').value.trim();
+  const telefono = document.getElementById('p-tel').value.trim();
+  const servicio = buildServiceName('p-servicio', 'p-servicio-variant');
+  const fechaPref = document.getElementById('p-fecha').value;
+  const detalles = document.getElementById('p-desc').value.trim();
+  if (!nombre || !telefono || !servicio || !detalles) { alert('Por favor completa todos los campos obligatorios (*).'); return; }
+  if (!validateVariant('p-servicio', 'p-servicio-variant')) return;
+  try {
+    const files = collectValidFiles('p-archivos');
+    const form = new FormData();
+    form.append('nombre', nombre);
+    form.append('telefono', telefono);
+    form.append('servicio', servicio);
+    form.append('detalles', detalles);
+    form.append('origen', 'Pagina Pedidos');
+    if (fechaPref) form.append('fechaPref', fechaPref);
+    files.forEach(f => form.append('archivos', f));
+
+    await apiFetch('/api/orders', {
+      method: 'POST',
+      body: form
+    }, userToken);
+    showToast('✅ Pedido registrado. Te contactaremos pronto.');
+    ['p-nombre','p-tel','p-fecha','p-desc'].forEach(id => document.getElementById(id).value = '');
+    document.getElementById('p-servicio').value = '';
+    updateServiceVariant('p-servicio', 'p-servicio-variant-wrap', 'p-servicio-variant', 'p-servicio-hint', 'p-servicio-variant-board');
+    document.getElementById('p-archivos').value = '';
+    refreshFilePreview('p-archivos', 'p-archivos-text', 'p-archivos-list');
+    await renderMyOrders();
+  } catch(err) { showToast('❌ Error al guardar: ' + err.message, true); }
+}
+
+async function renderMyOrders() {
+  const box = document.getElementById('my-orders-container');
+  if (!box) return;
+  if (!userToken) {
+    box.innerHTML = 'Inicia sesión para ver tus pedidos.';
+    return;
+  }
+  try {
+    const pedidos = await apiFetch('/api/orders/mis-pedidos', {}, userToken);
+    if (!pedidos || pedidos.length === 0) {
+      box.innerHTML = 'Aún no tienes pedidos registrados.';
+      return;
+    }
+    box.innerHTML = pedidos.map(p => {
+      const meta = parseOrderMeta(p.archivosJson);
+      const fecha = new Date(p.creadoEn).toLocaleString('es-GT', { day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit' });
+      const precio = meta.adminPrecio ? `<div class="my-order-price">Precio: ${esc(meta.adminPrecio)}</div>` : `<div class="my-order-price" style="color:#fcd34d">Precio pendiente</div>`;
+      const comentario = meta.adminComentario ? `<div class="my-order-comment">Comentario admin: ${esc(meta.adminComentario)}</div>` : `<div class="my-order-comment" style="color:var(--muted)">Sin comentario del admin todavía.</div>`;
+      const adminFiles = Array.isArray(meta.adminFiles) ? meta.adminFiles.filter(x => x && x.url) : [];
+      const adminFilesHtml = adminFiles.length
+        ? `<div class="my-order-comment" style="margin-top:0.45rem">Archivos del admin:${adminFiles.map(x => `<a href="${esc(x.url)}" target="_blank" rel="noopener" style="display:block;color:var(--accent);font-size:0.78rem;margin-top:2px">📥 ${esc(x.name || 'archivo')}</a>`).join('')}</div>`
+        : '';
+      const responseButtons = meta.adminPrecio || meta.adminComentario ? `
+        <div class="decision-row">
+          <button type="button" class="decision-btn ${meta.userDecision==='Aceptado'?'active-yes':''}" onclick="setUserDecision(${p.id},'Aceptado')">Estoy de acuerdo</button>
+          <button type="button" class="decision-btn ${meta.userDecision==='No aceptado'?'active-no':''}" onclick="setUserDecision(${p.id},'No aceptado')">No estoy de acuerdo</button>
+        </div>
+        <input type="hidden" id="u-decision-${p.id}" value="${escAttr(meta.userDecision)}">
+        <textarea id="u-comment-${p.id}" class="my-order-textarea" placeholder="Comentario para el administrador">${esc(meta.userComentario)}</textarea>
+        <button class="btn-action" style="margin-top:6px" onclick="submitUserResponse(${p.id})">Enviar respuesta</button>
+      ` : '';
+      const responseLabel = meta.userDecision ? `<div class="user-response-pill ${meta.userDecision==='Aceptado'?'user-response-yes':'user-response-no'}">Tu respuesta: ${esc(meta.userDecision)}</div>` : '';
+      return `<div class="my-order-item">
+        <div class="my-order-head">
+          <span><strong>${esc(p.servicio)}</strong></span>
+          <span>${esc(p.estado)} · ${fecha}</span>
+        </div>
+        <div style="font-size:0.8rem;color:#bcbcdc">${esc(p.detalles || '-')}</div>
+        ${precio}
+        ${comentario}
+        ${adminFilesHtml}
+        ${responseLabel}
+        ${responseButtons}
+      </div>`;
+    }).join('');
+  } catch (err) {
+    box.innerHTML = 'No se pudieron cargar tus pedidos.';
+  }
+}
+
+function setUserDecision(orderId, decision) {
+  const hidden = document.getElementById(`u-decision-${orderId}`);
+  if (hidden) hidden.value = decision;
+  const parent = hidden ? hidden.parentElement : null;
+  if (!parent) return;
+  parent.querySelectorAll('.decision-btn').forEach(btn => {
+    btn.classList.remove('active-yes', 'active-no');
+  });
+  const buttons = parent.querySelectorAll('.decision-btn');
+  if (buttons.length >= 2) {
+    if (decision === 'Aceptado') buttons[0].classList.add('active-yes');
+    if (decision === 'No aceptado') buttons[1].classList.add('active-no');
+  }
+}
+
+async function submitUserResponse(orderId) {
+  const decision = (document.getElementById(`u-decision-${orderId}`)?.value || '').trim();
+  const comentario = (document.getElementById(`u-comment-${orderId}`)?.value || '').trim();
+  if (!decision) {
+    showToast('❌ Selecciona si estás de acuerdo o no.', true);
+    return;
+  }
+  try {
+    await apiFetch(`/api/orders/${orderId}/user-response`, {
+      method: 'PATCH',
+      body: JSON.stringify({ decision, comentario })
+    }, userToken);
+    showToast('✅ Respuesta enviada al administrador.');
+    await renderMyOrders();
+  } catch (err) {
+    showToast('❌ No se pudo enviar tu respuesta.', true);
+  }
+}
+
+// ─── ADMIN PANEL ──────────────────────────────────────────
+async function loadAndRender() {
+  await renderOrders();
+  renderAdminStats();
+  await renderAdminUsers();
+}
+
+async function renderOrders() {
+  const container = document.getElementById('orders-container');
+  if (!container || !adminToken) return;
+  try {
+    const estado = currentFilter !== 'all' ? `?estado=${currentFilter}` : '';
+    const orders = await apiFetch('/api/orders' + estado, {}, adminToken);
+    ordersState = orders || [];
+  } catch(err) {
+    container.innerHTML = `<div class="empty-state"><div class="empty-icon">!</div><p>Error cargando pedidos: ${esc(err.message)}</p></div>`;
+    return;
+  }
+  const search = (document.getElementById('search-input')?.value || '').toLowerCase();
+  const filtered = ordersState.filter(o =>
+    !search ||
+    (o.nombre||'').toLowerCase().includes(search) ||
+    (o.servicio||'').toLowerCase().includes(search) ||
+    (o.telefono||'').includes(search)
+  );
+  document.getElementById('orders-count').textContent = `${filtered.length} pedido${filtered.length!==1?'s':''}`;
+  if (filtered.length === 0) {
+    container.innerHTML = `<div class="empty-state"><div class="empty-icon">📭</div><p>No hay pedidos que coincidan con el filtro.</p></div>`;
+    return;
+  }
+  let html = `<div style="overflow-x:auto"><table><thead><tr>
+    <th>#</th><th>Cliente</th><th>Servicio</th><th>Detalles</th><th>Fecha</th><th>Estado</th><th>Acciones</th>
+  </tr></thead><tbody>`;
+  filtered.forEach((o, i) => {
+    const meta = parseOrderMeta(o.archivosJson);
+    const bc = o.estado==='Pendiente'?'badge-pending':o.estado==='Completado'?'badge-done':'badge-cancelled';
+    const phone = (o.telefono||'').replace(/\D/g,'');
+    const dt = new Date(o.creadoEn);
+    const fecha = dt.toLocaleDateString('es-GT', { day:'2-digit', month:'2-digit', year:'numeric' });
+    const hora = dt.toLocaleTimeString('es-GT', { hour:'2-digit', minute:'2-digit' });
+    html += `<tr>
+      <td style="color:var(--muted);font-size:0.8rem">${filtered.length-i}</td>
+      <td><div class="td-name">${esc(o.nombre)}</div><div class="td-phone">Tel: ${esc(o.telefono)}</div><div style="font-size:0.72rem;color:#5a5a7a;margin-top:2px">${esc(o.origen||'Web')}</div></td>
+      <td class="td-service">${esc(o.servicio)}</td>
+      <td class="td-details">${esc(o.detalles)}${o.fechaPref?`<br><span style="color:var(--accent3);font-size:0.77rem">Fecha: ${esc(o.fechaPref)}</span>`:''}${attachmentSummaryHtml(o.archivosJson)}
+      <div style="margin-top:8px;padding-top:8px;border-top:1px dashed var(--border)">
+        <input id="a-precio-${o.id}" value="${escAttr(meta.adminPrecio)}" placeholder="Precio (ej: Q125.00)" style="margin-bottom:6px;padding:0.45rem 0.6rem;font-size:0.78rem">
+        <textarea id="a-comment-${o.id}" placeholder="Comentario para el cliente" style="min-height:56px;font-size:0.76rem">${esc(meta.adminComentario)}</textarea>
+        <button class="btn-action" style="margin-top:6px" onclick="saveAdminData(${o.id})">Guardar precio/comentario</button>
+        <div class="admin-file-tools">
+          <input type="file" id="a-files-${o.id}" class="admin-file-input" multiple>
+          <button class="admin-file-btn" onclick="uploadAdminFiles(${o.id})">Enviar archivo(s) al estudiante</button>
+          ${(meta.adminFiles || []).filter(x => x && x.url).map(x => `<a href="${esc(x.url)}" target="_blank" rel="noopener" style="display:block;color:var(--accent);font-size:0.73rem;margin-top:3px">📎 Admin: ${esc(x.name || 'archivo')}</a>`).join('')}
+        </div>
+        ${meta.userDecision ? `<div class="user-response-pill ${meta.userDecision==='Aceptado'?'user-response-yes':'user-response-no'}">Respuesta estudiante: ${esc(meta.userDecision)}</div>` : ''}
+        ${meta.userComentario ? `<div style="margin-top:4px;font-size:0.75rem;color:#d1d1ea">Comentario estudiante: ${esc(meta.userComentario)}</div>` : ''}
+      </div></td>
+      <td class="td-date">${fecha}<br><span style="font-size:0.75rem">${hora}</span></td>
+      <td><span class="badge ${bc}">${esc(o.estado)}</span></td>
+      <td>
+        <button class="btn-action done" onclick="changeStatus(${o.id},'Completado')">Listo</button>
+        <button class="btn-action" onclick="changeStatus(${o.id},'Pendiente')">Pend</button>
+        <button class="btn-action" onclick="changeStatus(${o.id},'Cancelado')">Canc</button><br>
+        <button class="btn-action del" onclick="deleteOrder(${o.id})">Eliminar</button>
+        <button class="btn-action" onclick="window.open('https://wa.me/502${phone}','_blank')">WA</button>
+      </td>
+    </tr>`;
+  });
+  html += '</tbody></table></div>';
+  container.innerHTML = html;
+}
+
+function renderAdminStats() {
+  const orders = ordersState;
+  const today = new Date().toLocaleDateString('es-GT', { day:'2-digit', month:'2-digit', year:'numeric' });
+  document.getElementById('stat-total').textContent = orders.length;
+  document.getElementById('stat-pending').textContent = orders.filter(o=>o.estado==='Pendiente').length;
+  document.getElementById('stat-done').textContent = orders.filter(o=>o.estado==='Completado').length;
+  document.getElementById('stat-today').textContent = orders.filter(o => {
+    const d = new Date(o.creadoEn).toLocaleDateString('es-GT', { day:'2-digit', month:'2-digit', year:'numeric' });
+    return d === today;
+  }).length;
+}
+
+function filterOrders(filter, btn) {
+  currentFilter = filter;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderOrders();
+}
+
+async function changeStatus(id, estado) {
+  try {
+    await apiFetch(`/api/orders/${id}/status`, { method:'PATCH', body: JSON.stringify({ estado }) }, adminToken);
+    await renderOrders(); renderAdminStats();
+  } catch(err) { showToast('❌ No se pudo cambiar estado.', true); }
+}
+
+async function deleteOrder(id) {
+  if (!confirm('¿Eliminar este pedido definitivamente?')) return;
+  try {
+    await apiFetch(`/api/orders/${id}`, { method:'DELETE' }, adminToken);
+    await renderOrders(); renderAdminStats();
+  } catch(err) { showToast('❌ No se pudo eliminar.', true); }
+}
+
+async function saveAdminData(id) {
+  const precio = document.getElementById(`a-precio-${id}`)?.value || '';
+  const comentario = document.getElementById(`a-comment-${id}`)?.value || '';
+  try {
+    await apiFetch(`/api/orders/${id}/admin`, {
+      method: 'PATCH',
+      body: JSON.stringify({ precio, comentario })
+    }, adminToken);
+    showToast('✅ Precio/comentario guardado.');
+    await renderOrders();
+  } catch (err) {
+    showToast('❌ No se pudo guardar comentario/precio.', true);
+  }
+}
+
+async function uploadAdminFiles(id) {
+  const input = document.getElementById(`a-files-${id}`);
+  const files = Array.from((input && input.files) ? input.files : []);
+  if (files.length === 0) {
+    showToast('❌ Selecciona al menos un archivo.', true);
+    return;
+  }
+  const maxBytes = 50 * 1024 * 1024;
+  const tooLarge = files.find(f => f.size > maxBytes);
+  if (tooLarge) {
+    showToast(`❌ El archivo "${tooLarge.name}" supera 50 MB.`, true);
+    return;
+  }
+
+  const form = new FormData();
+  files.forEach(f => form.append('archivos', f));
+
+  try {
+    await apiFetch(`/api/orders/${id}/admin-files`, {
+      method: 'POST',
+      body: form
+    }, adminToken);
+    if (input) input.value = '';
+    showToast('✅ Archivos enviados al estudiante.');
+    await renderOrders();
+  } catch (err) {
+    showToast('❌ No se pudieron enviar los archivos.', true);
+  }
+}
+
+// ─── ADMIN USERS ──────────────────────────────────────────
+async function renderAdminUsers() {
+  const box = document.getElementById('admin-users-list');
+  if (!box || !adminToken) return;
+  try {
+    const users = await apiFetch('/api/users', {}, adminToken);
+    const nonAdmin = (users||[]).filter(u => u.rol !== 'admin');
+    if (nonAdmin.length === 0) { box.innerHTML = 'No hay usuarios creados.'; return; }
+    let out = `<div style="overflow-x:auto"><table><thead><tr><th>Usuario</th><th>Creado</th><th>Acción</th></tr></thead><tbody>`;
+    nonAdmin.forEach(u => {
+      const d = new Date(u.creadoEn).toLocaleDateString('es-GT',{day:'2-digit',month:'2-digit',year:'numeric'});
+      out += `<tr>
+        <td style="font-weight:800;color:var(--text)">${esc(u.username)}</td>
+        <td style="color:var(--muted);font-size:0.82rem">${d}</td>
+        <td><button class="btn-action del" onclick="adminDeleteUser(${u.id})">🗑️ Eliminar</button></td>
+      </tr>`;
+    });
+    out += `</tbody></table></div>`;
+    box.innerHTML = out;
+  } catch(err) { box.innerHTML = 'Error al cargar usuarios.'; }
+}
+
+async function adminCreateUser() {
+  const u = document.getElementById('admin-new-user').value.trim();
+  const p = document.getElementById('admin-new-pass').value;
+  if (!u || u.length < 3) { alert('⚠️ Usuario mínimo 3 caracteres.'); return; }
+  if (!p || p.length < 4) { alert('⚠️ Contraseña mínimo 4 caracteres.'); return; }
+  try {
+    await apiFetch('/api/users', { method:'POST', body: JSON.stringify({ username: u, password: p }) }, adminToken);
+    document.getElementById('admin-new-user').value = '';
+    document.getElementById('admin-new-pass').value = '';
+    await renderAdminUsers();
+    showToast('✅ Usuario creado: ' + u);
+  } catch(err) { showToast('❌ ' + err.message, true); }
+}
+
+async function adminDeleteUser(id) {
+  if (!confirm('¿Eliminar este usuario?')) return;
+  try {
+    await apiFetch(`/api/users/${id}`, { method:'DELETE' }, adminToken);
+    await renderAdminUsers();
+    showToast('✅ Usuario eliminado.');
+  } catch(err) { showToast('❌ ' + err.message, true); }
+}
+
+// ─── INIT ─────────────────────────────────────────────────
+(function init() {
+  // Restaurar sesiones del sessionStorage
+  adminToken = sessionStorage.getItem('czAdminToken') || null;
+  userToken = sessionStorage.getItem('czUserToken') || null;
+  currentUser = sessionStorage.getItem('czUserName') || null;
+
+  // Limpia valores inválidos ("null", "undefined", tokens corruptos) para no saltar el modal por error.
+  if (!isLikelyJwt(userToken)) {
+    userToken = null;
+    sessionStorage.removeItem('czUserToken');
+  }
+  if (!currentUser || currentUser === 'null' || currentUser === 'undefined') {
+    currentUser = null;
+    sessionStorage.removeItem('czUserName');
+  }
+  if (!userToken) currentUser = null;
+
+  setUserAuthMode('login');
+  updateUserHeader();
+  bindUserModalAutoPrompt();
+  const s1 = document.getElementById('servicio');
+  if (s1) {
+    s1.addEventListener('change', () => updateServiceVariant('servicio', 'servicio-variant-wrap', 'servicio-variant', 'servicio-hint', 'servicio-variant-board'));
+    updateServiceVariant('servicio', 'servicio-variant-wrap', 'servicio-variant', 'servicio-hint', 'servicio-variant-board');
+  }
+  const s2 = document.getElementById('p-servicio');
+  if (s2) {
+    s2.addEventListener('change', () => updateServiceVariant('p-servicio', 'p-servicio-variant-wrap', 'p-servicio-variant', 'p-servicio-hint', 'p-servicio-variant-board'));
+    updateServiceVariant('p-servicio', 'p-servicio-variant-wrap', 'p-servicio-variant', 'p-servicio-hint', 'p-servicio-variant-board');
+  }
+  const f1 = document.getElementById('archivos');
+  if (f1) f1.addEventListener('change', () => refreshFilePreview('archivos', 'archivos-text', 'archivos-list'));
+  const f2 = document.getElementById('p-archivos');
+  if (f2) f2.addEventListener('change', () => refreshFilePreview('p-archivos', 'p-archivos-text', 'p-archivos-list'));
+  renderMyOrders();
+})();
+</script>
+</body>
+</html>
+
+
+
+
