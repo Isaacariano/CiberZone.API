@@ -6,11 +6,21 @@ using Microsoft.OpenApi.Models;
 using System.Text;
 using CiberZone.API.Data;
 using CiberZone.API.Models;
+using Npgsql;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // DATABASE PostgreSQL (compatible with local, Supabase, Neon, Railway, Render, etc.)
 var connStr = DbConnectionFactory.ResolveConnectionString(builder.Configuration);
+try
+{
+    var csb = new NpgsqlConnectionStringBuilder(connStr);
+    Console.WriteLine($"[Startup] DB target Host={csb.Host}; Port={csb.Port}; Database={csb.Database}; Username={csb.Username}");
+}
+catch
+{
+    Console.WriteLine("[Startup] DB connection string detected but could not parse details.");
+}
 
 builder.Services.AddDbContext<AppDbContext>(opt =>
     opt.UseNpgsql(connStr, npgsql =>
