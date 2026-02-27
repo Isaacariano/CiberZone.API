@@ -584,6 +584,8 @@ let userAuthLocked = false;
 let userPromptedByInteraction = false;
 let ordersState = [];
 let currentFilter = 'all';
+let adminAutoRefreshTimer = null;
+let adminRefreshInFlight = false;
 
 function isLikelyJwt(token) {
   return typeof token === 'string' && token.split('.').length === 3;
@@ -792,13 +794,16 @@ function goPage(page) {
     if (!adminToken) { openLoginModal(); return; }
     document.getElementById('page-admin').classList.add('active');
     loadAndRender();
+    startAdminAutoRefresh();
   } else if (page === 'pedidos') {
     document.getElementById('page-pedidos').classList.add('active');
     document.getElementById('nav-pedidos').classList.add('active');
     renderMyOrders();
+    stopAdminAutoRefresh();
   } else {
     document.getElementById('page-home').classList.add('active');
     document.getElementById('nav-home').classList.add('active');
+    stopAdminAutoRefresh();
   }
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
@@ -1230,6 +1235,34 @@ async function loadAndRender() {
   await renderAdminUsers();
 }
 
+function isAdminPageActive() {
+  const adminPage = document.getElementById('page-admin');
+  return !!adminPage && adminPage.classList.contains('active');
+}
+
+async function refreshAdminIfNeeded() {
+  if (!adminToken || !isAdminPageActive() || adminRefreshInFlight) return;
+  adminRefreshInFlight = true;
+  try {
+    await loadAndRender();
+  } finally {
+    adminRefreshInFlight = false;
+  }
+}
+
+function startAdminAutoRefresh() {
+  stopAdminAutoRefresh();
+  adminAutoRefreshTimer = setInterval(() => {
+    refreshAdminIfNeeded();
+  }, 8000);
+}
+
+function stopAdminAutoRefresh() {
+  if (!adminAutoRefreshTimer) return;
+  clearInterval(adminAutoRefreshTimer);
+  adminAutoRefreshTimer = null;
+}
+
 async function renderOrders() {
   const container = document.getElementById('orders-container');
   if (!container || !adminToken) return;
@@ -1441,6 +1474,10 @@ async function adminDeleteUser(id) {
   updateUserHeader();
   bindUserModalAutoPrompt();
   warmUpApi();
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') refreshAdminIfNeeded();
+  });
+  window.addEventListener('focus', () => refreshAdminIfNeeded());
   const s1 = document.getElementById('servicio');
   if (s1) {
     s1.addEventListener('change', () => updateServiceVariant('servicio', 'servicio-variant-wrap', 'servicio-variant', 'servicio-hint', 'servicio-variant-board'));
