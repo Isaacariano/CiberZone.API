@@ -161,6 +161,7 @@ app.UseStaticFiles();    // serve frontend from wwwroot
 app.UseAuthentication();
 app.UseAuthorization();
 
+app.MapGet("/api/health", () => Results.Ok(new { status = "ok", utc = DateTime.UtcNow }));
 app.MapControllers();
 
 // SPA fallback: any non-API route returns index.html

@@ -532,7 +532,7 @@
     <div class="login-error" id="login-error">⚠️ Usuario o contraseña incorrectos.</div>
     <div class="form-group"><label>Usuario</label><input type="text" id="login-user" placeholder="Usuario" onkeydown="if(event.key==='Enter')doLogin()"></div>
     <div class="form-group"><label>Contraseña</label><input type="password" id="login-pass" placeholder="Contraseña" onkeydown="if(event.key==='Enter')doLogin()"></div>
-    <button class="btn-login" onclick="doLogin()">Iniciar Sesión →</button>
+    <button class="btn-login" id="btn-admin-login" onclick="doLogin()">Iniciar Sesión →</button>
   </div>
 </div>
 
@@ -551,14 +551,14 @@
     <div id="auth-panel-login" class="auth-panel active">
       <div class="form-group"><label>Usuario</label><input type="text" id="u-login-user" placeholder="Ej: cliente01" onkeydown="if(event.key==='Enter')userLogin()"></div>
       <div class="form-group"><label>Contrasena</label><input type="password" id="u-login-pass" placeholder="Contrasena" onkeydown="if(event.key==='Enter')userLogin()"></div>
-      <button class="btn-login" style="background:var(--accent)" onclick="userLogin()">Entrar -></button>
+      <button class="btn-login" id="btn-user-login" style="background:var(--accent)" onclick="userLogin()">Entrar -></button>
       <div class="auth-note">No tienes cuenta? Toca la pestana <strong>Registrarse</strong> para crearla.</div>
     </div>
     <div id="auth-panel-register" class="auth-panel">
       <div class="form-group"><label>Usuario</label><input type="text" id="u-register-user" placeholder="Minimo 3 caracteres"></div>
       <div class="form-group"><label>Contrasena</label><input type="password" id="u-register-pass" placeholder="Minimo 4 caracteres"></div>
       <div class="form-group"><label>Confirmar contrasena</label><input type="password" id="u-register-pass2" placeholder="Repite la contrasena" onkeydown="if(event.key==='Enter')userRegister()"></div>
-      <button class="btn-login" style="background:var(--green)" onclick="userRegister()">Crear cuenta -></button>
+      <button class="btn-login" id="btn-user-register" style="background:var(--green)" onclick="userRegister()">Crear cuenta -></button>
     </div>
     <div id="auth-panel-admin" class="auth-panel">
       <div class="form-group"><label>Usuario admin</label><input type="text" id="u-admin-user" placeholder="Usuario administrador" onkeydown="if(event.key==='Enter')userAdminLogin()"></div>
@@ -644,6 +644,21 @@ async function apiFetch(path, options = {}, token = null) {
   const data = await res.json().catch(() => ({}));
   if (!res.ok) throw new Error(data.message || 'Error ' + res.status);
   return data;
+}
+
+function setButtonBusy(buttonId, isBusy, busyText) {
+  const btn = document.getElementById(buttonId);
+  if (!btn) return;
+  if (!btn.dataset.originalText) btn.dataset.originalText = btn.textContent;
+  btn.disabled = isBusy;
+  btn.style.opacity = isBusy ? '0.7' : '1';
+  btn.style.cursor = isBusy ? 'wait' : 'pointer';
+  btn.textContent = isBusy ? (busyText || 'Cargando...') : btn.dataset.originalText;
+}
+
+function warmUpApi() {
+  return fetch(API_BASE + '/api/health', { method: 'GET', cache: 'no-store' })
+    .catch(() => null);
 }
 
 function collectValidFiles(inputId) {
@@ -810,6 +825,7 @@ document.getElementById('login-modal').addEventListener('click', function(e){ if
 async function doLogin() {
   const u = document.getElementById('login-user').value.trim();
   const p = document.getElementById('login-pass').value;
+  setButtonBusy('btn-admin-login', true, 'Entrando...');
   try {
     const data = await apiFetch('/api/auth/login', { method:'POST', body: JSON.stringify({ username: u, password: p }) });
     if (data.rol !== 'admin') { document.getElementById('login-error').classList.add('show'); return; }
@@ -821,6 +837,8 @@ async function doLogin() {
   } catch (err) {
     document.getElementById('login-error').classList.add('show');
     document.getElementById('login-pass').value = '';
+  } finally {
+    setButtonBusy('btn-admin-login', false);
   }
 }
 
@@ -907,6 +925,7 @@ document.getElementById('user-modal').addEventListener('click', function(e){
 async function userLogin() {
   const u = document.getElementById('u-login-user').value.trim();
   const p = document.getElementById('u-login-pass').value;
+  setButtonBusy('btn-user-login', true, 'Entrando...');
   try {
     const data = await apiFetch('/api/auth/login', { method:'POST', body: JSON.stringify({ username: u, password: p }) });
     userToken = data.token;
@@ -922,6 +941,8 @@ async function userLogin() {
     const e = document.getElementById('user-error');
     e.textContent = '⚠️ ' + (err.message || 'Usuario o contraseña incorrectos.');
     e.classList.add('show');
+  } finally {
+    setButtonBusy('btn-user-login', false);
   }
 }
 
@@ -947,6 +968,7 @@ async function userRegister() {
     e.classList.add('show');
     return;
   }
+  setButtonBusy('btn-user-register', true, 'Creando cuenta...');
   try {
     const data = await apiFetch('/api/auth/register', {
       method:'POST',
@@ -968,6 +990,8 @@ async function userRegister() {
     const e = document.getElementById('user-error');
     e.textContent = '⚠️ ' + (err.message || 'No se pudo crear la cuenta.');
     e.classList.add('show');
+  } finally {
+    setButtonBusy('btn-user-register', false);
   }
 }
 
@@ -1416,6 +1440,7 @@ async function adminDeleteUser(id) {
   setUserAuthMode('login');
   updateUserHeader();
   bindUserModalAutoPrompt();
+  warmUpApi();
   const s1 = document.getElementById('servicio');
   if (s1) {
     s1.addEventListener('change', () => updateServiceVariant('servicio', 'servicio-variant-wrap', 'servicio-variant', 'servicio-hint', 'servicio-variant-board'));
